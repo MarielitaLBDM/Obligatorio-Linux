@@ -1,14 +1,15 @@
 #!/bin/bash
 
+for i in `ls`
+do
+        echo "Archivo:"`readlink -e $i`   "Cantidad de Links:"`ls -dl $i | tr -s " " | cut -d" " -f2`
+        echo "Numero de inodo:"`ls -dli $i | tr -s " " | cut -d" " -f1`"   Sistema de archivos montado en:"
+        echo "Tamaño:""   Permisos:"`ls -dl $i | tr -s " " | cut -c 2-10`
+        echo "Tipo de archivo:""   Dueño:"`ls -dl $i | tr -s " " | cut -d" " -f3`
+        echo "Grupo:"`ls -dl $i | tr -s " " | cut -d" " -f4`
+       	echo "Usuarios:"`getent group \`ls -dl $i | tr -s " " | cut -d" " -f4\` | cut -d: -f1,4`              
 
-if [ `ls -ld $2 | egrep ^d | cut -c1` == "d" ]
-then
-   SIZE="---"
-   echo $SIZE 
-else
-   SIZE=`ls -l $2 | tr -s " " | cut -d" " -f5`
-   echo $SIZE
-fi
-
-
-ls -ld $2 | egrep ^d | cut -c1
+        echo
+	echo "--------------------------------------------------------------------------"
+        echo
+done

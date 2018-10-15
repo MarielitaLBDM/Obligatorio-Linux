@@ -10,5 +10,5 @@ else
    echo $SIZE
 fi
 
-
+echo "no me anda el commit"
 ls -ld $2 | egrep ^d | cut -c1

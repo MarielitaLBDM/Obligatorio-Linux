@@ -4,8 +4,8 @@ for i in `ls`
 do
         echo "Archivo:"`readlink -e $i`   "Cantidad de Links:"`ls -dl $i | tr -s " " | cut -d" " -f2`
         echo "Numero de inodo:"`ls -dli $i | tr -s " " | cut -d" " -f1`"   Sistema de archivos montado en:"
-        echo "Tamaño:""   Permisos:"`ls -dl $i | tr -s " " | cut -c 2-10`
-        echo "Tipo de archivo:""   Dueño:"`ls -dl $i | tr -s " " | cut -d" " -f3`
+        echo "TamaÃ±o:""   Permisos:"`ls -dl $i | tr -s " " | cut -c 2-10`
+        echo "Tipo de archivo:""   DueÃ±o:"`ls -dl $i | tr -s " " | cut -d" " -f3`
         echo "Grupo:"`ls -dl $i | tr -s " " | cut -d" " -f4`
        	echo "Usuarios:"`getent group \`ls -dl $i | tr -s " " | cut -d" " -f4\` | cut -d: -f1,4`              
 

@@ -23,7 +23,7 @@ then
                 echo
         done
         echo "+++++++++++++++++++++++++++++"
-        echo "Se han listado" $@ "archivos."
+        echo "Se han listado" $# "archivos."
 
         
 else

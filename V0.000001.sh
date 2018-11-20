@@ -1,6 +1,8 @@
 #!/bin/bash
 
-for i in `ls`
+
+# Despliega informacion del los parametros
+for i in $@
 do
         echo "Archivo:"`readlink -e $i`   "Cantidad de Links:"`ls -dl $i | tr -s " " | cut -d" " -f2`
         echo "Numero de inodo:"`ls -dli $i | tr -s " " | cut -d" " -f1`"   Sistema de archivos montado en:"
@@ -13,3 +15,12 @@ do
 	echo "--------------------------------------------------------------------------"
         echo
 done
+
+# Controla si esta el -t presente, y si esta imprime la cantidad de archivos que se analizaron. Faltan cosas
+
+if [ $1 = "-t" ]
+then
+        echo "+++++++++++++++++++++++++++++"
+        echo "Se han listado" $(($#-1)) "archivos."
+else
+fi

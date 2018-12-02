@@ -27,30 +27,57 @@ NOEXISTE=0
 for i in "$@"
 do
         CA=`readlink -m  $i`        #Cargo en variable CA, el camino absoluto del archivo con el comando readlink cada vez que empieza a recorrer un nuevo elemento de la lista el FOR, el readlink con -m muestra camino absoluto exista o no
-        if [ -a $CA ]                   #compruebo que exista el archivo
+        if [ -e $CA ]                   #compruebo que exista el archivo
         then
+                if [ -d $CA ]
+                then
+                        TIPO="Directorio"
+                        TAMANO="---"
+                else
+                        if [ -c $CA ]
+                        then
+                                TIPO="Dispositivo"
+                                TAMANO="---"
+                        else
+                                if [ -L $i ]
+                                then
+                                        TIPO="Softlink"
+                                        TAMANO="---"
+                                else
+                                        if [ -c $CA ]
+                                        then
+                                                TIPO="Regular"
+                                                TAMANO=`ls -l $CA | tr -s " " | cut -d" " -f5`
+                                        else
+                                                TIPO="Otro"
+                                                TAMANO="---"
+                                        fi
+                                fi
+                        fi
+                fi
+
                 if ls -d $CA 1>/dev/null               #Compruebo que tenga permisos de lectura con el comando LS
                 then
                         EXISTE=$(($EXISTE + 1 ))
 
-                        echo "Archivo: " $CA     "Cantidad de Links: " `ls -dl $CA | tr -s " " | cut -d" " -f2`
-                        echo "Numero de inodo: " `ls -dli $CA | tr -s " " | cut -d" " -f1` "     Sistema de archivos montado en: " `df -P $i | tr -s " " | tail -1 | cut -d' ' -f 6`    #df muestra info del sistema de archivos donde se enuentra el archivo, -P muestra la info en 6 columnas, 2 lineas
-                        echo "Tamaño: " `ls -l $CA | tr -s " " | cut -d" " -f5` "       Permisos: " `ls -dl $CA | tr -s " " | cut -c 2-10`
-                        echo "Tipo de archivo: "FALTAESTO "      Dueño: " `ls -dl $CA | tr -s " " | cut -d" " -f3`
-                        echo "Grupo: " `ls -dl $CA | tr -s " " | cut -d" " -f4` "        Usuarios: " `getent group \`ls -dl $CA | tr -s " " | cut -d" " -f4\` | cut -d: -f4`       #Getent "busca" automaticamente utilizando "group" la linea del arhcivo /etc/group del grupo que se le pasa como parametro
+                        echo "Archivo:" $CA "Cantidad de Links:" `ls -dl $CA | tr -s " " | cut -d" " -f2`
+                        echo "Numero de inodo:" `ls -dli $CA | tr -s " " | cut -d" " -f1` "Sistema de archivos montado en:" `df -P $i | tr -s " " | tail -1 | cut -d' ' -f 6`    #df muestra info del sistema de archivos donde se enuentra el archivo, -P muestra la info en 6 columnas, 2 lineas
+                        echo "Tamaño:" $TAMANO "Permisos:" `ls -dl $CA | tr -s " " | cut -c 2-10`
+                        echo "Tipo de archivo:" $TIPO "Dueño:" `ls -dl $CA | tr -s " " | cut -d" " -f3`
+                        echo "Grupo:" `ls -dl $CA | tr -s " " | cut -d" " -f4` "Usuarios:" `getent group \`ls -dl $CA | tr -s " " | cut -d" " -f4\` | cut -d: -f4`       #Getent "busca" automaticamente utilizando "group" la linea del arhcivo /etc/group del grupo que se le pasa como parametro
 
                         echo
                         echo "--------------------------------------------------------------------------"
                         echo
 
                 else
-                        echo "No se tienen los permisos necesarios para acceder a la informacion del archivo: " $CA >&2
+                        echo "No se tienen los permisos necesarios para acceder a la informacion del archivo:" $CA >&2
                         echo "///"
                         NOEXISTE=1
                 fi
 
         else   
-                echo "No existe en el sistema el archivo: " $CA >&2
+                echo "No existe en el sistema el archivo:" $CA >&2
                 echo "*** " >&2
                 NOEXISTE=1          
         fi
@@ -60,7 +87,7 @@ done
 if [ $LISTAR = 1 ]
 then
         echo "+++++++++++++++++++++++++++++"
-        echo "Se han listado " $EXISTE " archivos."
+        echo "Se han listado" $EXISTE "archivos."
 fi
 
 if [ $NOEXISTE = 1 ]

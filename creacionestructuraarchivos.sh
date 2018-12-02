@@ -49,7 +49,7 @@ chmod 400 /obligatorio/usuario2/arch8
 chmod 606 /obligatorio/usuario3/arch9
 chmod 606 /obligatorio/usuario3/arch10
 chmod 400 /obligatorio/usuario3/arch11
-chmod 604 /obligatorio/usuario2/personal/arch12
+chmod 600 /obligatorio/usuario2/personal/arch12
 chmod 604 /obligatorio/usuario2/personal/arch13
 chmod 606 /obligatorio/usuario2/personal/arch14
 

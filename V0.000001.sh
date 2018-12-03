@@ -62,9 +62,9 @@ do
 
                         GRUPO=`ls -dl $CA | tr -s " " | cut -d" " -f4`
                         OWNER=`ls -dl $CA | tr -s " " | cut -d" " -f3`
-                        if [ "root" = "$OWNER" ]
+                        if [ "root" = "$OWNER" ]                        #Chequea si el usuario es root, ya que trata de manera levemente diferente la forma de mostrar los grupos
                         then
-                                USUARIOS=`getent group $GRUPO | cut -d: -f1,4 | tr ':' ','`
+                                USUARIOS=`getent group $GRUPO | cut -d: -f1,4 | tr ':' ','`     #Getent "busca" automaticamente utilizando "group" la linea del arhcivo /etc/group del grupo que se le pasa como parametro
                         else
                                 USUARIOS=`getent group $GRUPO | cut -d: -f4`
                         fi
@@ -73,7 +73,7 @@ do
                         echo "Numero de inodo:" `ls -dli $CA | tr -s " " | cut -d" " -f1` "            Sistema de archivos montado en:" `df -P $i | tr -s " " | tail -1 | cut -d' ' -f 6`    #df muestra info del sistema de archivos donde se enuentra el archivo, -P muestra la info en 6 columnas, 2 lineas
                         echo "Tamaño:" $TAMANO "                        Permisos:" `ls -dl $CA | tr -s " " | cut -c 2-10`
                         echo "Tipo de archivo:" $TIPO "              Dueño:" $OWNER
-                        echo "Grupo:" $GRUPO "                        Usuarios:" $USUARIOS       #Getent "busca" automaticamente utilizando "group" la linea del arhcivo /etc/group del grupo que se le pasa como parametro
+                        echo "Grupo:" $GRUPO "                        Usuarios:" $USUARIOS       
 
                         echo
                         echo "--------------------------------------------------------------------------"

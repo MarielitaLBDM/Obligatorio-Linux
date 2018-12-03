@@ -2,7 +2,7 @@
 
 # Verificamos si el primer parametro empieza con -, en caso de que si, comparamos y vemos si es -t, que es valido, en caso contrario mandamos mensaje de error
 LISTAR=0
-if [ `echo $1 | cut -c1` = "-" ]    #identificamos si empieza o no con -, si no empieza sigue normal porque es un archivo
+if [ `echo $1 | cut -c1` = "-" 2>/dev/null ]    #identificamos si empieza o no con -, si no empieza sigue normal porque es un archivo
 then
         if [ $1 = "-t" ]        #igualamos a -t para ver si el modificador es valido o no
         then
@@ -15,7 +15,7 @@ then
 fi
 
 # Controlamos si se ingresaron o no parametros, si es 0 envia mensaje por salida estandard de errores, y envia codigo de error 3
-if [ $# -eq 0 ]
+if [ "$#" = 0 ]
 then
         echo "Cantidad de parametros erronea, por favor ingrese algun archivo a listar" >&2
         exit 3
@@ -44,7 +44,7 @@ do
                                         TIPO="Softlink"
                                         TAMANO="---"
                                 else
-                                        if [ -c $CA ]
+                                        if [ -f $CA ]
                                         then
                                                 TIPO="Regular"
                                                 TAMANO=`ls -l $CA | tr -s " " | cut -d" " -f5`
@@ -60,11 +60,20 @@ do
                 then
                         EXISTE=$(($EXISTE + 1 ))
 
-                        echo "Archivo:" $CA "Cantidad de Links:" `ls -dl $CA | tr -s " " | cut -d" " -f2`
-                        echo "Numero de inodo:" `ls -dli $CA | tr -s " " | cut -d" " -f1` "Sistema de archivos montado en:" `df -P $i | tr -s " " | tail -1 | cut -d' ' -f 6`    #df muestra info del sistema de archivos donde se enuentra el archivo, -P muestra la info en 6 columnas, 2 lineas
-                        echo "Tamaño:" $TAMANO "Permisos:" `ls -dl $CA | tr -s " " | cut -c 2-10`
-                        echo "Tipo de archivo:" $TIPO "Dueño:" `ls -dl $CA | tr -s " " | cut -d" " -f3`
-                        echo "Grupo:" `ls -dl $CA | tr -s " " | cut -d" " -f4` "Usuarios:" `getent group \`ls -dl $CA | tr -s " " | cut -d" " -f4\` | cut -d: -f4`       #Getent "busca" automaticamente utilizando "group" la linea del arhcivo /etc/group del grupo que se le pasa como parametro
+                        GRUPO=`ls -dl $CA | tr -s " " | cut -d" " -f4`
+                        OWNER=`ls -dl $CA | tr -s " " | cut -d" " -f3`
+                        if [ "root" = "$OWNER" ]
+                        then
+                                USUARIOS=`getent group $GRUPO | cut -d: -f1,4 | tr ':' ','`
+                        else
+                                USUARIOS=`getent group $GRUPO | cut -d: -f4`
+                        fi
+
+                        echo "Archivo:" $CA "         Cantidad de Links:" `ls -dl $CA | tr -s " " | cut -d" " -f2`
+                        echo "Numero de inodo:" `ls -dli $CA | tr -s " " | cut -d" " -f1` "            Sistema de archivos montado en:" `df -P $i | tr -s " " | tail -1 | cut -d' ' -f 6`    #df muestra info del sistema de archivos donde se enuentra el archivo, -P muestra la info en 6 columnas, 2 lineas
+                        echo "Tamaño:" $TAMANO "                        Permisos:" `ls -dl $CA | tr -s " " | cut -c 2-10`
+                        echo "Tipo de archivo:" $TIPO "              Dueño:" $OWNER
+                        echo "Grupo:" $GRUPO "                        Usuarios:" $USUARIOS       #Getent "busca" automaticamente utilizando "group" la linea del arhcivo /etc/group del grupo que se le pasa como parametro
 
                         echo
                         echo "--------------------------------------------------------------------------"

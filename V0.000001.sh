@@ -29,22 +29,22 @@ do
         CA=`readlink -m  $i`        #Cargo en variable CA, el camino absoluto del archivo con el comando readlink cada vez que empieza a recorrer un nuevo elemento de la lista el FOR, el readlink con -m muestra camino absoluto exista o no
         if [ -e $CA ]                   #compruebo que exista el archivo
         then
-                if [ -d $CA ]
+                if [ -d $CA ]           #veo si es directorio
                 then
                         TIPO="Directorio"
                         TAMANO="---"
                 else
-                        if [ -c $CA ]
+                        if [ -c $CA ]           #veo si es dispositivo
                         then
                                 TIPO="Dispositivo"
                                 TAMANO="---"
                         else
-                                if [ -L $i ]
+                                if [ -L $i ]            #veo si es softlink
                                 then
                                         TIPO="Softlink"
                                         TAMANO="---"
                                 else
-                                        if [ -f $CA ]
+                                        if [ -f $CA ]           #veo si es regular o no
                                         then
                                                 TIPO="Regular"
                                                 TAMANO=`ls -l $CA | tr -s " " | cut -d" " -f5`

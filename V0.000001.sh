@@ -2,7 +2,7 @@
 
 # Verificamos si el primer parametro empieza con -, en caso de que si, comparamos y vemos si es -t, que es valido, en caso contrario mandamos mensaje de error
 LISTAR=0
-if [ `echo $1 | cut -c1` = "-" 2>/dev/null ]    #identificamos si empieza o no con -, si no empieza sigue normal porque es un archivo
+if [ `echo $1 | cut -c1` = "-" &>/dev/null ]    #identificamos si empieza o no con -, si no empieza sigue normal porque es un archivo
 then
         if [ $1 = "-t" ]        #igualamos a -t para ver si el modificador es valido o no
         then
@@ -56,7 +56,7 @@ do
                         fi
                 fi
 
-                if ls -d $CA 1>/dev/null               #Compruebo que tenga permisos de lectura con el comando LS
+                if ls -d $CA &>/dev/null               #Compruebo que tenga permisos de lectura con el comando LS
                 then
                         EXISTE=$(($EXISTE + 1 ))
 
@@ -75,9 +75,7 @@ do
                         echo "Tipo de archivo:" $TIPO "              Dueño:" $OWNER
                         echo "Grupo:" $GRUPO "                        Usuarios:" $USUARIOS       
 
-                        echo
                         echo "--------------------------------------------------------------------------"
-                        echo
 
                 else
                         echo "No se tienen los permisos necesarios para acceder a la informacion del archivo:" $CA >&2

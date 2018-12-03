@@ -16,12 +16,12 @@ PARAMETROS=`echo $QUERY_STRING|cut -d= -f2 | cut -d"&" -f1 | tr '%3B' ' ' | tr -
 
 
 #Este if controla que el query_string venga con el checkbox o no
-if `cat $QUERY_STRING | grep "MOSTRARTOTAL=TRUE"`
+if echo $QUERY_STRING | grep "MOSTRARTOTAL=TRUE" > /dev/null
 then
     MOSTRARTOTAL="-t"
-    ./ejercicio1 $MOSTRARTOTAL $PARAMETROS
+    echo `./ejercicio1 $MOSTRARTOTAL $PARAMETROS` #Se ejecuta el script con los parametros enviados y el modificador
 else
-    ./ejercicio1 $PARAMETROS  #Se ejecuta el script con los parametros enviados
+    echo `./ejercicio1 $PARAMETROS`  #Se ejecuta el script con los parametros enviados
 fi 
 
 echo "</BODY>

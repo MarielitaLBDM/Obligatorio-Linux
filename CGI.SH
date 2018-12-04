@@ -12,11 +12,11 @@ echo "<HTML>
 #El primer cut corta los parametros de el resto de la URL y el segundo separa el input del text field del checkbox
 #sustituyo el separador de parametros ; (%3B) por un espacio. Asi se usa como parametros para el script del ejercicio 1 
 #y apreto los espacios a uno solo
-PARAMETROS=`echo $QUERY_STRING|cut -d= -f2 | cut -d"&" -f1 | tr '%3B' ' ' | tr -s " "` 
+PARAMETROS=`echo "$QUERY_STRING" | cut -d"&" -f1 | cut -d= -f2 | tr '%3B' ' ' | tr -s " "`    #hay que poner el QUERY_STRING entre "" para que no tome el & como tarea, y cortar primero por ese caracter y luego por =
 
 
 #Este if controla que el query_string venga con el checkbox o no
-if echo $QUERY_STRING | grep "MOSTRARTOTAL=TRUE" > /dev/null
+if echo "$QUERY_STRING" | grep "&check=t$" > /dev/null
 then
     MOSTRARTOTAL="-t"
     echo `./ejercicio1 $MOSTRARTOTAL $PARAMETROS` #Se ejecuta el script con los parametros enviados y el modificador
@@ -28,3 +28,4 @@ echo "</BODY>
 </HTML>"
 
 #mycgi?archivos=arch1%3Barch2&MOSTRARTOTAL=TRUE (ejemplo de QS con checkbox prendido)
+/obligatorio/test prueba

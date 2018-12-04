@@ -56,7 +56,7 @@ do
                         fi
                 fi
 
-                if ls -d $CA &>/dev/null               #Compruebo que tenga permisos de lectura con el comando LS
+                if ls -d $CA >/dev/null 2>/dev/null               #Compruebo que tenga permisos de lectura con el comando LS
                 then
                         EXISTE=$(($EXISTE + 1 ))
 

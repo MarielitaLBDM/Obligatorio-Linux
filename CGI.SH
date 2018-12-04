@@ -6,26 +6,25 @@ echo "<HTML>
 <HEAD>
 <TITLE>Respuesta de consulta</TITLE>
 </HEAD>
-<BODY>"
+<BODY>
+<PRE>"          #PreFormatedText, para mantener formato de lo que introduzcamos luego dentro del body, inclusive el script nuestro, si no queda todo de corrido
 
-#Se sacan los parametros ingresados en el formulario, decodificando la QUERY_STRING.
-#El primer cut corta los parametros de el resto de la URL y el segundo separa el input del text field del checkbox
-#sustituyo el separador de parametros ; (%3B) por un espacio. Asi se usa como parametros para el script del ejercicio 1 
+#Se sacan los parametros ingresados en el formulario, para decodificar la QUERY_STRING.
+#Hay que cortar primero en el & para que no nos de problema luego, cortando la parte del checkbox (si existe) del resto del string, luego en = para sacar los parametros introducidos
+#sustituyo el separador de parametros ; (%3B) por un espacio y %2F por / con SED. Asi se usan como parametros para el script del ejercicio 1 
 #y apreto los espacios a uno solo
-PARAMETROS=`echo "$QUERY_STRING" | cut -d"&" -f1 | cut -d= -f2 | tr '%3B' ' ' | tr -s " "`    #hay que poner el QUERY_STRING entre "" para que no tome el & como tarea, y cortar primero por ese caracter y luego por =
+
+PARAMETROS=`echo "$QUERY_STRING" | cut -d"&" -f1 | cut -d= -f2 | sed 's/%3B/ /g' | sed 's/%2F/\//g'`    #hay que poner el QUERY_STRING entre "" para que no tome el & como tarea, y cortar primero por ese caracter y luego por =
 
 
 #Este if controla que el query_string venga con el checkbox o no
-if echo "$QUERY_STRING" | grep "&check=t$" > /dev/null
+if echo "$QUERY_STRING" | egrep "&check=t$" > /dev/null
 then
-    MOSTRARTOTAL="-t"
-    echo `./ejercicio1 $MOSTRARTOTAL $PARAMETROS` #Se ejecuta el script con los parametros enviados y el modificador
+    /var/www/cgi-bin/search -t $PARAMETROS #Se ejecuta el script con los parametros enviados y el modificador
 else
-    echo `./ejercicio1 $PARAMETROS`  #Se ejecuta el script con los parametros enviados
+    /var/www/cgi-bin/search $PARAMETROS  #Se ejecuta el script con los parametros enviados
 fi 
 
-echo "</BODY>
+echo "</PRE>
+</BODY>
 </HTML>"
-
-#mycgi?archivos=arch1%3Barch2&MOSTRARTOTAL=TRUE (ejemplo de QS con checkbox prendido)
-/obligatorio/test prueba

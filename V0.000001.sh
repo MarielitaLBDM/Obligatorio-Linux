@@ -98,8 +98,14 @@ then
 fi
 
 if [ $NOEXISTE = 1 ]
-then   
-        exit 1
+then
+        if [ $EXISTE = 0 ]
+        then
+                echo "NO EXISTE NINGUN ARCHIVO DE LOS SOLICITADOS"
+                exit 4
+        else
+                exit 1
+        fi
 else   
         exit 0
 fi

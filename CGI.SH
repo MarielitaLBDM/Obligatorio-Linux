@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo Content-type: text/html
+echo Content-Type: text/html
 echo
 echo "<HTML>
 <HEAD>
@@ -16,7 +16,7 @@ echo "<HTML>
 
 PARAMETROS=`echo "$QUERY_STRING" | cut -d"&" -f1 | cut -d= -f2 | sed 's/%3B/ /g' | sed 's/%2F/\//g'`    #hay que poner el QUERY_STRING entre "" para que no tome el & como tarea, y cortar primero por ese caracter y luego por =
 
-for i in $PARAMETROS
+for i in $PARAMETROS #se controla que el primer char de cada parametro sea "/" y de esta manera verificar si es una ruta absoluta
 do
     if ! [ `echo $i | cut -c1` = "/" ]
     then 
@@ -31,13 +31,43 @@ do
     fi
 done
 
-#Este if controla que el query_string venga con el checkbox o no
 if echo "$QUERY_STRING" | egrep "&check=t$" > /dev/null
 then
-    /var/www/cgi-bin/search -t $PARAMETROS #Se ejecuta el script con los parametros enviados y el modificador
+    for i in $PARAMETROS
+    do
+        if [ `/var/www/cgi-bin/search $i | tr -s " " | grep "Cantidad de Links" | cut -d" " -f6` -gt 1 ]
+        then
+            echo <b>
+            echo `/var/www/cgi-bin/search $i`
+            echo </b>
+        else
+            echo `/var/www/cgi-bin/search $i`
+        fi
+    done
+    echo `/var/www/cgi-bin/search -t $i` | tail -2
 else
-    /var/www/cgi-bin/search $PARAMETROS  #Se ejecuta el script con los parametros enviados
+    for i in $PARAMETROS
+    do
+        if [ `/var/www/cgi-bin/search $i | tr -s " " | grep "Cantidad de Links" | cut -d" " -f6` -gt 1 ]
+        then
+            echo <b>
+            echo `/var/www/cgi-bin/search $i`
+            echo </b>
+        else
+            echo `/var/www/cgi-bin/search $i`
+        fi
+    done
 fi
+
+
+
+#Este if controla que el query_string venga con el checkbox o no
+#if echo "$QUERY_STRING" | egrep "&check=t$" > /dev/null
+#then
+#    /var/www/cgi-bin/search -t $PARAMETROS #Se ejecuta el script con los parametros enviados y el modificador
+#else
+#    /var/www/cgi-bin/search $PARAMETROS  #Se ejecuta el script con los parametros enviados
+#fi
 
 if [ $? -gt 0 ]
 then

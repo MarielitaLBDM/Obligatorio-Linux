@@ -39,7 +39,7 @@ do
         echo "</PRE>  
             ERROR!! Ingresar parametros solamente con caminos absolutos.
             <BR>
-            Retorno al forulario, haga <a href="http://localhost/index.html">clic aqui</a>
+            Retorno al forulario, haga <a href="http://obligatorio/html/index.html">clic aqui</a>
             </BODY>
             </HTML>"
 
@@ -52,7 +52,7 @@ done
 ## GUARDO CODIGO DE ERROR CON TODOS LOS PARAMETROS ##
 #####################################################
 
-/var/www/cgi-bin/search $PARAMETROS >/dev/null 2>/dev/null
+/obligatorio/ejercicio2/cgi-bin/search $PARAMETROS >/dev/null 2>/dev/null
 CODIGO=$?
 
 
@@ -65,13 +65,13 @@ if [ $CODIGO -eq 0 -o $CODIGO -eq 1 ]                     #Detecta si el script 
 then
     for i in $PARAMETROS         #el for recorre archivo por archivo, y en caso de tener HARDLINK>1 imprime con <b>, si no solo imprime lo que manda el script, SIN usar modificador -t
     do
-        if ! [ `/var/www/cgi-bin/search $i | tr -s " " | grep "Cantidad de Links" | cut -d" " -f6` = "1" ]
+        if ! [ `/obligatorio/ejercicio2/cgi-bin/search $i | tr -s " " | grep "Cantidad de Links" | cut -d" " -f6` = "1" ]
         then
             echo "<b>"
-            /var/www/cgi-bin/search $i
+            /obligatorio/ejercicio2/cgi-bin/search $i
             echo "</b>"
         else
-            /var/www/cgi-bin/search $i
+            /obligatorio/ejercicio2/cgi-bin/search $i
         fi
     done
 else
@@ -79,17 +79,17 @@ else
     then
         for i in $PARAMETROS                  #el for recorre archivo por archivo, y en caso de tener HARDLINK>1 imprime con <b>, si no solo imprime lo que manda el script, SIN usar modificador -t
         do
-            if ! [ `/var/www/cgi-bin/search $i | tr -s " " | grep "Cantidad de Links" | cut -d" " -f6` = "1" ]
+            if ! [ `/obligatorio/ejercicio2/cgi-bin/search $i | tr -s " " | grep "Cantidad de Links" | cut -d" " -f6` = "1" ]
             then
                 echo "<b>"
-                /var/www/cgi-bin/search $i | egrep -v "^NO EXISTE NINGUN ARCHIVO DE LOS SOLICITADOS$"
+                /obligatorio/ejercicio2/cgi-bin/search $i | egrep -v "^NO EXISTE NINGUN ARCHIVO DE LOS SOLICITADOS$"
                 echo "</b>"
             else
-                /var/www/cgi-bin/search $i | egrep -v "^NO EXISTE NINGUN ARCHIVO DE LOS SOLICITADOS$"
+                /obligatorio/ejercicio2/cgi-bin/search $i | egrep -v "^NO EXISTE NINGUN ARCHIVO DE LOS SOLICITADOS$"
             fi
         done
     else
-        /var/www/cgi-bin/search $PARAMETROS                    #En caso que sea codigo 2 o 3, el script mandara un error, por lo tanto, mostramos lo que manda directamente el script
+        /obligatorio/ejercicio2/cgi-bin/search $PARAMETROS                    #En caso que sea codigo 2 o 3, el script mandara un error, por lo tanto, mostramos lo que manda directamente el script
     fi
 fi
 
@@ -97,9 +97,9 @@ if echo "$QUERY_STRING" | egrep -q "&check=t$"                 #Controla si se e
 then
     if [ $CODIGO = 4 ]
     then
-            /var/www/cgi-bin/search -t $PARAMETROS | tail -3
+            /obligatorio/ejercicio2/cgi-bin/search -t $PARAMETROS | tail -3
     else
-            /var/www/cgi-bin/search -t $PARAMETROS | tail -2    
+            /obligatorio/ejercicio2/cgi-bin/search -t $PARAMETROS | tail -2    
     fi
 fi
 
@@ -113,7 +113,7 @@ fi
 if [ $? -gt 0 ]
 then
     echo "</PRE>
-        Retorno al formulario, haga <a href="http://localhost/index.html">clic aqui</a>
+        Retorno al formulario, haga <a href="http://obligatorio/html/index.html">clic aqui</a>
         </BODY>
         </HTML>"
     exit

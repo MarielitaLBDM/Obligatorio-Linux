@@ -16,6 +16,16 @@ echo "<HTML>
 
 PARAMETROS=`echo "$QUERY_STRING" | cut -d"&" -f1 | cut -d= -f2 | sed 's/%3B/ /g' | sed 's/%2F/\//g'`    #hay que poner el QUERY_STRING entre "" para que no tome el & como tarea, y cortar primero por ese caracter y luego por =
 
+for i in $PARAMETROS
+do
+    if ! [ `echo $i | cut -c1` = "/"]
+    then    
+        echo "ERROR!! Ingresar parametros solamente con caminos absolutos."
+        echo "</PRE>
+            </BODY>
+            </HTML>"
+    fi
+done
 
 #Este if controla que el query_string venga con el checkbox o no
 if echo "$QUERY_STRING" | egrep "&check=t$" > /dev/null
@@ -23,7 +33,12 @@ then
     /var/www/cgi-bin/search -t $PARAMETROS #Se ejecuta el script con los parametros enviados y el modificador
 else
     /var/www/cgi-bin/search $PARAMETROS  #Se ejecuta el script con los parametros enviados
-fi 
+fi
+
+if [ $? -gt 0 ]
+then
+    echo "Retorno al formulario haga <a href="http://localhost/index.html">clic aqui</a>"
+fi
 
 echo "</PRE>
 </BODY>

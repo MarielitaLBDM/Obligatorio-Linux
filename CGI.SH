@@ -1,5 +1,6 @@
 #!/bin/bash
 
+echo
 echo Content-Type: text/html
 
 ############################

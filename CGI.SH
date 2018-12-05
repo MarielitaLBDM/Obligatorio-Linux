@@ -1,7 +1,7 @@
 #!/bin/bash
-
-echo
 echo Content-Type: text/html
+echo
+
 
 ############################
 ## Genero encabezado HTML ##

@@ -6,8 +6,6 @@ echo Content-Type: text/html
 ## Genero encabezado HTML ##
 ############################
 
-QUERY_STRING="http://localhost/cgi-bin/cgi?archivos=%2Fasd%3B%2Fpepe"
-
 echo "<HTML>
 <HEAD>
 <TITLE>Respuesta de consulta</TITLE>
@@ -65,7 +63,7 @@ CODIGO=$?
 
 if [ $CODIGO -eq 0 -o $CODIGO -eq 1 ]                     #Detecta si el script envia error o mostrara algo en pantalla
 then
-    for i in $PARAMETROS                  #el for recorre archivo por archivo, y en caso de tener HARDLINK>1 imprime con <b>, si no solo imprime lo que manda el script, SIN usar modificador -t
+    for i in $PARAMETROS         #el for recorre archivo por archivo, y en caso de tener HARDLINK>1 imprime con <b>, si no solo imprime lo que manda el script, SIN usar modificador -t
     do
         if ! [ `/var/www/cgi-bin/search $i | tr -s " " | grep "Cantidad de Links" | cut -d" " -f6` = "1" ]
         then

@@ -6,6 +6,8 @@ echo Content-Type: text/html
 ## Genero encabezado HTML ##
 ############################
 
+QUERY_STRING="http://localhost/cgi-bin/cgi?archivos=%2Fasd%3B%2Fpepe"
+
 echo "<HTML>
 <HEAD>
 <TITLE>Respuesta de consulta</TITLE>
@@ -61,11 +63,11 @@ CODIGO=$?
 ## Printado y control de hardlinks y -t ##
 ##########################################
 
-if [ $CODIGO -eq 0,1,4 ]                      #Detecta si el script envia error o mostrara algo en pantalla
+if [ $CODIGO -eq 0 -o $CODIGO -eq 1 ]                     #Detecta si el script envia error o mostrara algo en pantalla
 then
     for i in $PARAMETROS                  #el for recorre archivo por archivo, y en caso de tener HARDLINK>1 imprime con <b>, si no solo imprime lo que manda el script, SIN usar modificador -t
     do
-        if ! [ `/var/www/cgi-bin/search $i | tr -s " " | grep "Cantidad de Links" | cut -d" " -f6` -eq "1" ]
+        if ! [ `/var/www/cgi-bin/search $i | tr -s " " | grep "Cantidad de Links" | cut -d" " -f6` = "1" ]
         then
             echo "<b>"
             /var/www/cgi-bin/search $i
@@ -74,22 +76,33 @@ then
             /var/www/cgi-bin/search $i
         fi
     done
-    if echo "$QUERY_STRING" | egrep "&check=t$" > /dev/null                 #Controla si se envio modificador -t
-    then
-        if [ $CODIGO -eq 4 ]                                                  #Si es codigo 4 y TIENE -t, imprime las ultimas 3 lineas, si tiene T y NO es codigo 4, imprime las ultimas 2
-        then
-            /var/www/cgi-bin/search -t $PARAMETROS | tail -3
-        else
-            /var/www/cgi-bin/search -t $PARAMETROS | tail -2
-        fi
-    else                                                                    #Si NO tiene -t, chequea si es codigo 4 e imprime la ULTIMA linea solamente, si no sigue corriendo el script normalmente
-        if [ $CODIGO -eq 4 ]
-        then
-            /var/www/cgi-bin/search -t $PARAMETROS | tail -1
-        fi
-    fi
 else
-    /var/www/cgi-bin/search $PARAMETROS                     #En caso que sea codigo 2 o 3, el script mandara un error, por lo tanto, mostramos lo que manda directamente el script
+    if [ $CODIGO -eq 4 ]
+    then
+        for i in $PARAMETROS                  #el for recorre archivo por archivo, y en caso de tener HARDLINK>1 imprime con <b>, si no solo imprime lo que manda el script, SIN usar modificador -t
+        do
+            if ! [ `/var/www/cgi-bin/search $i | tr -s " " | grep "Cantidad de Links" | cut -d" " -f6` = "1" ]
+            then
+                echo "<b>"
+                /var/www/cgi-bin/search $i | egrep -v "^NO EXISTE NINGUN ARCHIVO DE LOS SOLICITADOS$"
+                echo "</b>"
+            else
+                /var/www/cgi-bin/search $i | egrep -v "^NO EXISTE NINGUN ARCHIVO DE LOS SOLICITADOS$"
+            fi
+        done
+    else
+        /var/www/cgi-bin/search $PARAMETROS                    #En caso que sea codigo 2 o 3, el script mandara un error, por lo tanto, mostramos lo que manda directamente el script
+    fi
+fi
+
+if echo "$QUERY_STRING" | egrep -q "&check=t$"                 #Controla si se envio modificador -t
+then
+    if [ $CODIGO = 4 ]
+    then
+            /var/www/cgi-bin/search -t $PARAMETROS | tail -3
+    else
+            /var/www/cgi-bin/search -t $PARAMETROS | tail -2    
+    fi
 fi
 
 

@@ -61,7 +61,7 @@ CODIGO=$?
 ## Printado y control de hardlinks y -t ##
 ##########################################
 
-if [ $CODIGO = 0,1,4 ]                      #Detecta si el script envia error o mostrara algo en pantalla
+if [ $CODIGO -eq 0,1,4 ]                      #Detecta si el script envia error o mostrara algo en pantalla
 then
     for i in $PARAMETROS                  #el for recorre archivo por archivo, y en caso de tener HARDLINK>1 imprime con <b>, si no solo imprime lo que manda el script, SIN usar modificador -t
     do
@@ -76,14 +76,14 @@ then
     done
     if echo "$QUERY_STRING" | egrep "&check=t$" > /dev/null                 #Controla si se envio modificador -t
     then
-        if [ $CODIGO = 4 ]                                                  #Si es codigo 4 y TIENE -t, imprime las ultimas 3 lineas, si tiene T y NO es codigo 4, imprime las ultimas 2
+        if [ $CODIGO -eq 4 ]                                                  #Si es codigo 4 y TIENE -t, imprime las ultimas 3 lineas, si tiene T y NO es codigo 4, imprime las ultimas 2
         then
             /var/www/cgi-bin/search -t $PARAMETROS | tail -3
         else
             /var/www/cgi-bin/search -t $PARAMETROS | tail -2
         fi
     else                                                                    #Si NO tiene -t, chequea si es codigo 4 e imprime la ULTIMA linea solamente, si no sigue corriendo el script normalmente
-        if [ $CODIGO = 4 ]
+        if [ $CODIGO -eq 4 ]
         then
             /var/www/cgi-bin/search -t $PARAMETROS | tail -1
         fi

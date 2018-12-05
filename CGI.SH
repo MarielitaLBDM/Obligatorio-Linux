@@ -18,12 +18,16 @@ PARAMETROS=`echo "$QUERY_STRING" | cut -d"&" -f1 | cut -d= -f2 | sed 's/%3B/ /g'
 
 for i in $PARAMETROS
 do
-    if ! [ `echo $i | cut -c1` = "/"]
-    then    
-        echo "ERROR!! Ingresar parametros solamente con caminos absolutos."
-        echo "</PRE>
+    if ! [ `echo $i | cut -c1` = "/" ]
+    then 
+        echo "</PRE>  
+            ERROR!! Ingresar parametros solamente con caminos absolutos.
+            <BR>
+            Retorno al forulario, haga <a href="http://localhost/index.html">clic aqui</a>
             </BODY>
             </HTML>"
+
+        exit
     fi
 done
 
@@ -37,7 +41,8 @@ fi
 
 if [ $? -gt 0 ]
 then
-    echo "Retorno al formulario haga <a href="http://localhost/index.html">clic aqui</a>"
+    echo "</PRE>
+        Retorno al formulario, haga <a href="http://localhost/index.html">clic aqui</a>"
 fi
 
 echo "</PRE>

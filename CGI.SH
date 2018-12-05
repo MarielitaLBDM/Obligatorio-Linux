@@ -15,6 +15,7 @@ echo "<HTML>
 #y apreto los espacios a uno solo
 
 PARAMETROS=`echo "$QUERY_STRING" | cut -d"&" -f1 | cut -d= -f2 | sed 's/%3B/ /g' | sed 's/%2F/\//g'`    #hay que poner el QUERY_STRING entre "" para que no tome el & como tarea, y cortar primero por ese caracter y luego por =
+MOSTRAR=0
 
 for i in $PARAMETROS #se controla que el primer char de cada parametro sea "/" y de esta manera verificar si es una ruta absoluta
 do
@@ -31,48 +32,47 @@ do
     fi
 done
 
-if echo "$QUERY_STRING" | egrep "&check=t$" > /dev/null
+/var/www/cgi-bin/search $PARAMETROS >/dev/null 2>/dev/null
+CODIGO=$?
+
+if [ $CODIGO = 0,1,4 ]                      #Detecta si el script envia error o mostrara algo en pantalla
 then
-    for i in $PARAMETROS
+    for i in $PARAMETROS                  #el for recorre archivo por archivo, y en caso de tener HARDLINK>1 imprime con <b>, si no solo imprime lo que manda el script, SIN usar modificador -t
     do
-        if [ `/var/www/cgi-bin/search $i | tr -s " " | grep "Cantidad de Links" | cut -d" " -f6` -gt 1 ]
+        if ! [ `/var/www/cgi-bin/search $i | tr -s " " | grep "Cantidad de Links" | cut -d" " -f6` -eq "1" ]
         then
-            echo <b>
-            echo `/var/www/cgi-bin/search $i`
-            echo </b>
+            echo "<b>"
+            /var/www/cgi-bin/search $i
+            echo "</b>"
         else
-            echo `/var/www/cgi-bin/search $i`
+            /var/www/cgi-bin/search $i
         fi
     done
-    echo `/var/www/cgi-bin/search -t $i` | tail -2
+    if echo "$QUERY_STRING" | egrep "&check=t$" > /dev/null                 #Controla si se envio modificador -t
+    then
+        if [ $CODIGO = 4 ]                                                  #Si es codigo 4 y TIENE -t, imprime las ultimas 3 lineas, si tiene T y NO es codigo 4, imprime las ultimas 2
+        then
+            /var/www/cgi-bin/search -t $PARAMETROS | tail -3
+        else
+            /var/www/cgi-bin/search -t $PARAMETROS | tail -2
+        fi
+    else                                                                    #Si NO tiene -t, chequea si es codigo 4 e imprime la ULTIMA linea solamente, si no sigue corriendo el script normalmente
+        if [ $CODIGO = 4 ]
+        then
+            /var/www/cgi-bin/search -t $PARAMETROS | tail -1
+        fi
+    fi
 else
-    for i in $PARAMETROS
-    do
-        if [ `/var/www/cgi-bin/search $i | tr -s " " | grep "Cantidad de Links" | cut -d" " -f6` -gt 1 ]
-        then
-            echo <b>
-            echo `/var/www/cgi-bin/search $i`
-            echo </b>
-        else
-            echo `/var/www/cgi-bin/search $i`
-        fi
-    done
+    /var/www/cgi-bin/search $PARAMETROS                     #En caso que sea codigo 2 o 3, el script mandara un error, por lo tanto, mostramos lo que manda directamente el script
 fi
-
-
-
-#Este if controla que el query_string venga con el checkbox o no
-#if echo "$QUERY_STRING" | egrep "&check=t$" > /dev/null
-#then
-#    /var/www/cgi-bin/search -t $PARAMETROS #Se ejecuta el script con los parametros enviados y el modificador
-#else
-#    /var/www/cgi-bin/search $PARAMETROS  #Se ejecuta el script con los parametros enviados
-#fi
 
 if [ $? -gt 0 ]
 then
     echo "</PRE>
-        Retorno al formulario, haga <a href="http://localhost/index.html">clic aqui</a>"
+        Retorno al formulario, haga <a href="http://localhost/index.html">clic aqui</a>
+        </BODY>
+        </HTML>"
+    exit
 fi
 
 echo "</PRE>

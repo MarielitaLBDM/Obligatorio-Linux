@@ -1,7 +1,11 @@
 #!/bin/bash
 
 echo Content-Type: text/html
-echo
+
+############################
+## Genero encabezado HTML ##
+############################
+
 echo "<HTML>
 <HEAD>
 <TITLE>Respuesta de consulta</TITLE>
@@ -14,8 +18,19 @@ echo "<HTML>
 #sustituyo el separador de parametros ; (%3B) por un espacio y %2F por / con SED. Asi se usan como parametros para el script del ejercicio 1 
 #y apreto los espacios a uno solo
 
+
+
+#############################
+## DEFINICION DE VARIABLES ##
+#############################
+
 PARAMETROS=`echo "$QUERY_STRING" | cut -d"&" -f1 | cut -d= -f2 | sed 's/%3B/ /g' | sed 's/%2F/\//g'`    #hay que poner el QUERY_STRING entre "" para que no tome el & como tarea, y cortar primero por ese caracter y luego por =
 MOSTRAR=0
+
+
+##################################
+## CONTROL DE CAMINOS ABSOLUTOS ##
+##################################
 
 for i in $PARAMETROS #se controla que el primer char de cada parametro sea "/" y de esta manera verificar si es una ruta absoluta
 do
@@ -32,8 +47,19 @@ do
     fi
 done
 
+
+#####################################################
+## GUARDO CODIGO DE ERROR CON TODOS LOS PARAMETROS ##
+#####################################################
+
 /var/www/cgi-bin/search $PARAMETROS >/dev/null 2>/dev/null
 CODIGO=$?
+
+
+
+##########################################
+## Printado y control de hardlinks y -t ##
+##########################################
 
 if [ $CODIGO = 0,1,4 ]                      #Detecta si el script envia error o mostrara algo en pantalla
 then
@@ -66,6 +92,13 @@ else
     /var/www/cgi-bin/search $PARAMETROS                     #En caso que sea codigo 2 o 3, el script mandara un error, por lo tanto, mostramos lo que manda directamente el script
 fi
 
+
+
+###############################################
+## Control para printar link de retorno o no ##
+## si lo muestra sale generando final HTML   ##
+###############################################
+
 if [ $? -gt 0 ]
 then
     echo "</PRE>
@@ -74,6 +107,11 @@ then
         </HTML>"
     exit
 fi
+
+
+################
+## Final HTML ##
+################
 
 echo "</PRE>
 </BODY>
